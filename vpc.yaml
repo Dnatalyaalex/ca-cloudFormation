@@ -110,14 +110,14 @@ Resources:
 
 # Public Subnet 1A Route Table Associations 
   PublicSubnet1ARouteTableAssociations:
-    Type: AWS::EC2::SubnetRouteTableAssociations
+    Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet1A
       RouteTableId: !Ref PublicRouteTable
 
 # Public Subnet 1B Route Table Associations 
   PublicSubnet1BRouteTableAssociations:
-    Type: AWS::EC2::SubnetRouteTableAssociations
+    Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet1B
       RouteTableId: !Ref PublicRouteTable
