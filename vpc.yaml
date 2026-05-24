@@ -3,6 +3,7 @@ Description: 'CloudFormation VPC'
 
 Resources:
   MyVPC:
+  # MyVPC
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: '172.16.0.0/16'
@@ -11,7 +12,7 @@ Resources:
       Tags:
         - Key: Name
           Value: MyVPC
-
+# Public Subnet1A in AZ 1
   PublicSubnet1A:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -22,7 +23,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicSubnet1A
-
+# Private Subnet in AZ 1
   AppPrivateSubnet1A:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -32,7 +33,7 @@ Resources:
       Tags:
         - Key: Name
           Value: AppPrivateSubnet1A
-
+# Data Private subnet in AZ 1
   DataPrivateSubnet1A:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -42,7 +43,7 @@ Resources:
       Tags:
         - Key: Name
           Value: DataPrivateSubnet1A
-
+# Public subnet in AZ 2
   PublicSubnet1B:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -53,7 +54,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicSubnet1B
-
+# APP Private subnet in AZ 2
   AppPrivateSubnet1B:
     Type: 'AWS::EC2::Subnet'
     Properties:
@@ -63,6 +64,7 @@ Resources:
       Tags:
         - Key: Name
           Value: AppPrivateSubnet1B
+# Data Private subnet in AZ 2          
   DataPrivateSubnet1B:
     Type: 'AWS::EC2::Subnet'
     Properties:
