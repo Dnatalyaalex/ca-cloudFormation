@@ -175,7 +175,7 @@ Resources:
         - Key: Name
           Value: App2 
 
-# APP Security Group 
+# APP Instance 1A Security Group 
   AppInstance1ASG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -187,7 +187,7 @@ Resources:
           ToPort: 22
           SourceSecurityGroupId: !Ref BastionSG
 
-# APP Security Group 
+# APP Instance 1B Security Group 
   AppInstance1BSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
