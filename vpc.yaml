@@ -122,5 +122,80 @@ Resources:
       SubnetId: !Ref PublicSubnet1B
       RouteTableId: !Ref PublicRouteTable
 
+# Bastion Server
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: Bastion
+      ImageId: ami-051eaec1417c5d4ae 
+      SubnetId: !Ref PublicSubnet1A
+      SecurityGroupIds:
+        - !Ref BastionSG
+      Tags:
+        - Key: Name
+          Value: BastionHost
+# Bastion Security Group
+  BastionSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Enable SSH access'
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 85.221.152.224/32
 
+# APP Instance 1A
+  AppInstance1A:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: Bastion
+      ImageId: ami-051eaec1417c5d4ae
+      SubnetId: !Ref AppPrivateSubnet1A
+      SecurityGroupId:
+        - !Ref AppInstance1ASG
+      Tags:
+        - Key: Name
+          Value: App1 
+
+# APP Instance 1B
+  AppInstance1B:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: Bastion
+      ImageId: ami-051eaec1417c5d4ae
+      SubnetId: !Ref AppPrivateSubnet1B
+      SecurityGroupId:
+        - !Ref AppInstance1BSG
+      Tags:
+        - Key: Name
+          Value: App2 
+
+# APP Security Group 
+  AppInstance1ASG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Allow ssh from bastion'
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IoProtocol: tcp
+          PromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: BastionSG
+
+# APP Security Group 
+  AppInstance1BSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Allow ssh from AppInstance1A'
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IoProtocol: icmp
+          PromPort: -1
+          ToPort: -1
+          SourceSecurityGroupId: AppInstance1ASG
 
