@@ -155,7 +155,7 @@ Resources:
       KeyName: Bastion
       ImageId: ami-051eaec1417c5d4ae
       SubnetId: !Ref AppPrivateSubnet1A
-      SecurityGroupId:
+      SecurityGroupIds:
         - !Ref AppInstance1ASG
       Tags:
         - Key: Name
@@ -169,7 +169,7 @@ Resources:
       KeyName: Bastion
       ImageId: ami-051eaec1417c5d4ae
       SubnetId: !Ref AppPrivateSubnet1B
-      SecurityGroupId:
+      SecurityGroupIds:
         - !Ref AppInstance1BSG
       Tags:
         - Key: Name
@@ -182,10 +182,10 @@ Resources:
       GroupDescription: 'Allow ssh from bastion'
       VpcId: !Ref MyVPC
       SecurityGroupIngress:
-        - IoProtocol: tcp
-          PromPort: 22
+        - IpProtocol: tcp
+          FromPort: 22
           ToPort: 22
-          SourceSecurityGroupId: BastionSG
+          SourceSecurityGroupId: !Ref BastionSG
 
 # APP Security Group 
   AppInstance1BSG:
@@ -194,8 +194,8 @@ Resources:
       GroupDescription: 'Allow ssh from AppInstance1A'
       VpcId: !Ref MyVPC
       SecurityGroupIngress:
-        - IoProtocol: icmp
-          PromPort: -1
+        - IpProtocol: icmp
+          FromPort: -1
           ToPort: -1
-          SourceSecurityGroupId: AppInstance1ASG
+          SourceSecurityGroupId: !Ref AppInstance1ASG
 
