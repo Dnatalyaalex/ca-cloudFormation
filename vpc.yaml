@@ -23,7 +23,7 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicSubnet1A
-# Private Subnet in AZ 1
+# APP Private Subnet in AZ 1
   AppPrivateSubnet1A:
     Type: 'AWS::EC2::Subnet'
     Properties:
