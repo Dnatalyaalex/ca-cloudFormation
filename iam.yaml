@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'IAM Cloudformation template'
+
+Resources:
+# IAM Group
+  IamDevteamGroup:
+    Type: AWS::IAM::Group 
+    Properties:
+      GroupName: 'devteamGroup'
+# IAM User
+  IamUser:
+    Type: 'AWS::IAM::User' 
+    Properties:
+      UserName: 'natali_cfm'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+# Attache a User to a group
+  UserToGroupAttachment:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref IamDevteamGroup
+      Users:
+        - !Ref IamUser
+
+# IAM Policy
+  IamDevteamPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: 'ec2access-to-s3'
+      Groups: 
+        - !Ref IamDevteamGroup
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3:ListAccessPointsForObjectLambda"
+              - "s3:GetAccessPoint"
+              - "s3:PutAccountPublicAccessBlock"
+              - "s3:ListAccessPoints"
+              - "s3:CreateStorageLensGroup"
+              - "s3:ListJobs"
+              - "s3:PutStorageLensConfiguration"
+              - "s3:ListMultiRegionAccessPoints"
+              - "s3:ListStorageLensGroups"
+              - "s3:ListStorageLensConfigurations"
+              - "s3:GetAccountPublicAccessBlock"
+              - "s3:ListAllMyBuckets"
+              - "s3:ListAccessGrantsInstances"
+              - "s3:PutAccessPointPublicAccessBlock"
+              - "s3:CreateJob"
+            Resource: '*'
+# IAM Role
+  IamDevteamRole:
+    Type: AWS::IAM::Role 
+    Properties:
+      Description: 'Allow EC2 Instances actions on S3'
+      ManagedPolicyArns:
+        - !Ref IamDevteamPolicy 
+      RoleName: 'ec2access-to-s3'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - ec2.amazonaws.com 
+            Action: 
+              - 'sts:AssumeRole'
+            
+
+      
