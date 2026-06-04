@@ -95,80 +95,70 @@ Resources:
           ToPort: '80'
           CidrIp: '0.0.0.0/0'
 
-# Application Load Balancer
-  MyLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+
+# LaunchTemplate
+  WebServerLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
     Properties:
-      Subnets:
+      LaunchTemplateName: 'MyAsgGroupTemplate'
+      LaunchTemplateData:
+        ImageId: 'ami-051eaec1417c5d4ae'
+        InstanceType: 't2.micro'
+        SecurityGroupIds:
+          - !Ref WebServerSecurityGroup
+        UserData:
+          Fn::Base64: !Sub |
+            sudo apt update
+            sudo apt install -y apache2
+            sudo echo "Hello from my ASG" > /var/www/html/index.html
+            sudo systemctl restrt apache2
+
+# Autoscaling Group
+  WebServerAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: WebServerAutoScalingGroup
+      LaunchTemplate:
+        LaunchTemplateId: !Ref WebServerLaunchTemplate
+        Version: !GetAtt WebServerLaunchTemplate.LatestVersionNumber
+      MaxSize: '3'
+      MinSize: '1'
+      DesiredCapacity: '2'
+      AvailabilityZoneDistribution:
+          CapacityDistributionStrategy: 'balanced-best-effort'
+      VPCZoneIdentifier:
         - !Ref PublicSubnet1A
         - !Ref PublicSubnet1B
-      SecurityGroups:
-        - !Ref WebServerSecurityGroup
+    
 
-# Target Group for ALB
-  MyTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup 
+# Alarm
+  HighCpuAlarm:
+    Type: AWS::CloudWatch::Alarm
     Properties:
-      Name: 'WebServerTG'
-      VpcId: !Ref MyVPC
-      Targets:
-        - Id: !Ref WebServerInstance1A
-          Port: 80
-        - Id: !Ref WebServerInstance1B
-          Port: 80
-      TargetType: 'instance'
-      Port: 80
-      Protocol: 'HTTP'
+      AlarmDescription: "Alarm when CPU exeeds 70%"
+      MetricName: 'CPUUtilization'
+      Namespace: 'AWS/EC2'
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '3'
+      Threshold: '70'
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: WebServerAutoScalingGroup
+      AlarmActions:
+        - !Ref WebServerScalingPolicy
 
-# Listener for ALB
-  MyListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener 
+# Scale Out Policy
+  WebServerScalingPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
     Properties:
-      DefaultActions:
-        - Type: 'forward'
-          TargetGroupArn: !Ref MyTargetGroup
-      LoadBalancerArn: !Ref MyLoadBalancer
-      Port: 80
-      Protocol: 'HTTP'
+      AutoScalingGroupName: !Ref WebServerAutoScalingGroup
+      PolicyType: SimpleScaling
+      ScalingAdjustment: '1'
+      Cooldown: '300'
+      AdjustmentType: ChangeInCapacity
 
-# Web Server Instance 1A
-  WebServerInstance1A:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: 't2.micro'
-      ImageId: 'ami-051eaec1417c5d4ae'
-      SubnetId: !Ref PublicSubnet1A
-      SecurityGroupIds:
-        - !Ref WebServerSecurityGroup
-      Tags:
-        - Key: 'Name'
-          Value: 'WebServerInstance1A'
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          sudo apt update
-          sudo apt install -y apache2
-          sudo systemctl start apache2
-          sudo echo 'Hello from my Web Server 1A' > /var/www/html/index.html 
-          sudo systemctl restart apache2
 
-# Web Server Instance 1B
-  WebServerInstance1B:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: 't2.micro'
-      ImageId: 'ami-051eaec1417c5d4ae'
-      SubnetId: !Ref PublicSubnet1B
-      SecurityGroupIds:
-        - !Ref WebServerSecurityGroup
-      Tags:
-        - Key: 'Name'
-          Value: 'WebServerInstance1B'
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash 
-          sudo apt update
-          sudo apt install -y apache2
-          sudo systemctl start apache2
-          sudo echo 'Hello from my Web Server 1B' > /var/www/html/index.html
-          sudo systemctl restart apache2 
+
+
