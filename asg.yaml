@@ -95,6 +95,36 @@ Resources:
           ToPort: '80'
           CidrIp: '0.0.0.0/0'
 
+#Application Load Balancer
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1A
+        - !Ref PublicSubnet1B
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+
+# Target Group for ALB
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup 
+    Properties:
+      Name: 'WebServerTG'
+      VpcId: !Ref MyVPC
+      TargetType: 'instance'
+      Port: 80
+      Protocol: 'HTTP'
+
+# Listener for ALB
+  MyListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener 
+    Properties:
+      DefaultActions:
+        - Type: 'forward'
+          TargetGroupArn: !Ref MyTargetGroup
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: 80
+      Protocol: 'HTTP'
 
 # LaunchTemplate
   WebServerLaunchTemplate:
@@ -126,6 +156,8 @@ Resources:
       DesiredCapacity: '2'
       AvailabilityZoneDistribution:
           CapacityDistributionStrategy: 'balanced-best-effort'
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
       VPCZoneIdentifier:
         - !Ref PublicSubnet1A
         - !Ref PublicSubnet1B
