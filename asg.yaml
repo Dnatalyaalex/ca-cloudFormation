@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFormation VPC'
 
 Resources:
-# MyVPC
+# VPC
   MyVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
@@ -94,10 +94,6 @@ Resources:
           FromPort: '80'
           ToPort: '80'
           CidrIp: '0.0.0.0/0'
-        - IpProtocol: 'tcp'
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: '85.221.153.25/32'
 
 #Application Load Balancer
   MyLoadBalancer:
@@ -109,7 +105,7 @@ Resources:
       SecurityGroups:
         - !Ref WebServerSecurityGroup
 
-# Target Group for ALB
+# A target group for the ALB
   MyTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup 
     Properties:
@@ -130,7 +126,7 @@ Resources:
       Port: 80
       Protocol: 'HTTP'
 
-# LaunchTemplate
+# Launch Template
   WebServerLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:

@@ -11,10 +11,10 @@ Resources:
   IamUser:
     Type: 'AWS::IAM::User' 
     Properties:
-      UserName: 'natali_cfm'
+      UserName: 'natali_cfn'
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AdministratorAccess'
-# Attache a User to a group
+# Attachment the User to the group
   UserToGroupAttachment:
     Type: AWS::IAM::UserToGroupAddition
     Properties:

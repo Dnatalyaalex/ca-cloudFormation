@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFormation VPC'
 
 Resources:
-# MyVPC
+# My VPC
   MyVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
@@ -44,7 +44,7 @@ Resources:
         - Key: Name
           Value: myvpc-igw
 
-# Attach the Internet Gateway to the VPC
+# Internet Gateway attachment to the VPC
   AttachGateway:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
