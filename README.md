@@ -1,4 +1,10 @@
-## **asg.yaml – Infrastructure Overview**
+This repository contains a set of AWS CloudFormation YAML templates created for learning and practice purposes.
+Each file demonstrates how to provision a specific AWS resource, such as VPC, EC2 instances, IAM roles, RDS database, and S3 buckets.
+The templates are not tightly connected into a single application architecture. Instead, they are independent examples used to practice infrastructure provisioning with CloudFormation.
+
+Below is a short description of each file.
+
+## **asg.yaml**
 
 This CloudFormation template provisions a scalable and highly available web application infrastructure on AWS.
 
@@ -36,7 +42,7 @@ Purpose
 This setup ensures high availability, automatic scaling based on load, and cost efficiency for a simple web application deployed inside a single VPC.
 
 
-## **ec2.yaml – Infrastructure Overview**
+## **ec2.yaml**
 
 The infrastructure described in the `ec2.yaml` file is intended to deploy a similar set of cloud resources, except for the Auto Scaling configuration.
 
@@ -78,7 +84,7 @@ The `vpc.yaml` file provisions the network infrastructure for a secure and highl
 
 ---
 
-## Public Subnets Usage
+### **Public Subnets Usage**
 
 The infrastructure originally included two public subnets, each intended to host a separate entry point.
 
